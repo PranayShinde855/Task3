@@ -9,22 +9,26 @@ using System.Web.Mvc;
 using Task3.Models;
 using Task3.Services;
 using Task3.Filters;
+using PagedList;
+using PagedList.Mvc;
 
 namespace Task3.Controllers
 {
-   
+    [CustomAuthorizeFilter("Admin", "Normal", "Test")]
     public class CategoriesController : Controller
     {
         private DBModel db = new DBModel();
 
      
         // GET: Categories
-        public ActionResult Index()
+        public ActionResult Index(int page =1, int pagesize =10)
         {
-            return View(db.categories.ToList());
+            var listCategories = db.categories.ToList();
+            PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize);
+            return View(_categoryList);
         }
 
-        // GET: Categories/Details/5
+        
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -45,9 +49,7 @@ namespace Task3.Controllers
             return View();
         }
 
-        // POST: Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "CategoryId,CategoryName,IsActive,CreatedBy,CreatedDate,ModifiedDate")] Category category)
@@ -58,7 +60,7 @@ namespace Task3.Controllers
                 _category.CategoryId = category.CategoryId;
                 _category.CategoryName = category.CategoryName;
                 _category.IsActive = category.IsActive;
-                _category.CreatedBy = category.CreatedBy;
+                _category.CreatedBy = (int) Session["UserId"];
                 _category.CreatedDate = DateTime.Now;
                 _category.ModifiedDate = null;
                 db.categories.Add(_category);

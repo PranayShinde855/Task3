@@ -12,7 +12,7 @@ using Task3.Filters;
 
 namespace Task3.Controllers
 {
-    [CustomAuthenticationFilter]
+    [CustomAuthorizeFilter("Admin")]
     public class RolesController : Controller
     {
         private DBModel db = new DBModel();

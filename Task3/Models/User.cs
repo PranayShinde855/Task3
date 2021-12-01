@@ -22,9 +22,6 @@ namespace Task3.Models
 
         public string Password { get; set; }
 
-        public static implicit operator int(User v)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

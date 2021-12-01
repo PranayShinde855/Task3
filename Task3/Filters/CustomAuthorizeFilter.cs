@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Task3.Services;
 
 namespace Task3.Filters
@@ -37,6 +38,16 @@ namespace Task3.Filters
                 }
             }
             return authorize;
+        }
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            filterContext.Result = new RedirectToRouteResult(
+                new RouteValueDictionary
+                {
+                    { "controller", "Login" },
+                    { "action", "Unauthorized" }
+                });
         }
     }
 }

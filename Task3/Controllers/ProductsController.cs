@@ -9,19 +9,25 @@ using System.Web.Mvc;
 using Task3.Models;
 using Task3.Services;
 using Task3.Filters;
+using PagedList;
+using PagedList.Mvc;
+using NPOI.SS.Formula.Functions;
 
 namespace Task3.Controllers
 {
-   
-
+    [CustomAuthenticationFilter]
+    [CustomAuthorizeFilter("Admin", "Normal", "Test")]
     public class ProductsController : Controller
-    {
+    {       
         private DBModel db = new DBModel();
-        // GET: Products
-        public ActionResult Index()
+
+        [CustomAuthorizeFilter("Admin", "Normal", "Test")]
+
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
-            var products = db.products.Include(p => p.Category);
-            return View(products.ToList());
+            var listProducts = db.products.ToList();
+            PagedList<Product> _productsList = new PagedList<Product>(listProducts, page, pageSize);
+            return View(_productsList);
         }
 
         // GET: Products/Details/5
@@ -46,9 +52,6 @@ namespace Task3.Controllers
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ProductName,CategoryId,CreatedBy,CreatedDate,ModifiedDate")] Product product)

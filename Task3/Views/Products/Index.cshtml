@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Task3.Models.Product>
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Task3.Models.Product>
 
 @{
     ViewBag.Title = "Index";
@@ -12,15 +13,11 @@
 </p>
 <table class="table">
     <tr>
-
-        <th>
-            @Html.DisplayNameFor(model => model.ProductName)
-        </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.Category.CategoryName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Category.IsActive)
+            @Html.DisplayNameFor(model => model.ProductName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.CreatedBy)
@@ -30,12 +27,35 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ModifiedDate)
+        </th>*@
+
+
+        <th>
+            ProductName
         </th>
+        <th>
+            CategoryName
+        </th>
+        <th>
+            IsActive
+        </th>
+        <th>
+            .CreatedBy
+        </th>
+        <th>
+            CreatedDate
+        </th>
+        <th>
+            ModifiedDate)
+        </th>
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
 <tr>
+
     <td>
         @Html.DisplayFor(modelItem => item.ProductName)
     </td>
@@ -60,6 +80,8 @@
         @Html.ActionLink("Delete", "Delete", new { id = item.Id })
     </td>
 </tr>
-}
+    }
 
 </table>
+<br />
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))

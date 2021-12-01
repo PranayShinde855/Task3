@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Task3.Models;
 using Task3.Services;
 using Task3.Filters;
+using System.Security.Claims;
 
 namespace Task3.Controllers
 {
@@ -16,7 +17,7 @@ namespace Task3.Controllers
     {
         private DBModel db = new DBModel();
 
-        [CustomAuthenticationFilter]
+    //[CustomAuthenticationFilter]
         [CustomAuthorizeFilter("Admin")]
         // GET: Account
         public ActionResult Index()
@@ -78,7 +79,7 @@ namespace Task3.Controllers
             if(ModelState.IsValid)
             {
                 var checkInputs = db.Users.Where(m => m.UserName == users.UserName && m.Password == users.Password).SingleOrDefault();
-                if ( checkInputs!= null)
+                if ( checkInputs!=null)
                 {
                     Session["UserId"] = checkInputs.UserId;
                     Session["UserName"] = checkInputs.UserName;
@@ -90,6 +91,13 @@ namespace Task3.Controllers
                     }
                     else
                     {
+                        var identity = new ClaimsIdentity("User");
+                        
+                        var c = new List<Claim> {
+                            new Claim(ClaimTypes.Name, checkInputs.UserName)
+                        };
+                        identity.AddClaim(c.FirstOrDefault());
+                        HttpContext.User = new ClaimsPrincipal(identity);
                         return RedirectToAction("Index", "Products");
                     }
                 }
@@ -112,6 +120,12 @@ namespace Task3.Controllers
             Session["UserId"] = string.Empty;
             Session["UserName"] = string.Empty;
             return RedirectToAction("Login");
+        }
+
+        public ActionResult Unauthorized()
+        {
+            ViewBag.Message = "Unauthorized page!";
+            return View("Login");
         }
 
         protected override void Dispose(bool disposing)

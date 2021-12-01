@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Task3.Models.Category>
+﻿@model PagedList.IPagedList<Task3.Models.Category>
+@using PagedList.Mvc;
 
 @{
     ViewBag.Title = "Index";
@@ -10,49 +11,52 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+<table id="category" class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CategoryName)
+            CategoryName
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IsActive)
+            IsActive
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedBy)
+            CreatedBy
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedDate)
+            CreatedDate
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ModifiedDate)
+            ModifiedDate
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedBy)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ModifiedDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CategoryId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CategoryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CategoryId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModifiedDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CategoryId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CategoryId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CategoryId })
+            </td>
+        </tr>
+    }
 
 </table>
+<br />
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
