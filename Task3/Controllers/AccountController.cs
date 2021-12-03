@@ -10,6 +10,8 @@ using Task3.Models;
 using Task3.Services;
 using Task3.Filters;
 using System.Security.Claims;
+using PagedList;
+using PagedList.Mvc;
 
 namespace Task3.Controllers
 {
@@ -17,13 +19,14 @@ namespace Task3.Controllers
     {
         private DBModel db = new DBModel();
 
-    //[CustomAuthenticationFilter]
+        [CustomAuthenticationFilter]
         [CustomAuthorizeFilter("Admin")]
         // GET: Account
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
-            var users = db.Users.Include(u => u.Role);
-            return View(users.ToList());
+            var users = db.Users.Include(u => u.Role).ToList();
+            PagedList<User> _users = new PagedList<User>(users, page, pageSize);
+            return View(_users);
         }
 
 
@@ -34,9 +37,6 @@ namespace Task3.Controllers
             return View();
         }
 
-        // POST: Account/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Register([Bind(Include = "UserId,UserName,RoleId,Password")] User user)
@@ -122,10 +122,10 @@ namespace Task3.Controllers
             return RedirectToAction("Login");
         }
 
-        public ActionResult Unauthorized()
+        public ActionResult AccessDenied()
         {
             ViewBag.Message = "Unauthorized page!";
-            return View("Login");
+            return View();
         }
 
         protected override void Dispose(bool disposing)

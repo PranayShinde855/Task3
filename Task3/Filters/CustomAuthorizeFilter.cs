@@ -45,8 +45,8 @@ namespace Task3.Filters
             filterContext.Result = new RedirectToRouteResult(
                 new RouteValueDictionary
                 {
-                    { "controller", "Login" },
-                    { "action", "Unauthorized" }
+                    { "controller", "Account" },
+                    { "action", "AccessDenied" }
                 });
         }
     }

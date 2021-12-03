@@ -12,7 +12,7 @@ namespace Task3.Filters
     {
         public void OnAuthentication(AuthenticationContext filterContext)
         {
-            if(!filterContext.HttpContext.User.Identity.IsAuthenticated)
+            if (string.IsNullOrEmpty(Convert.ToString(filterContext.HttpContext.Session["UserName"])))
             {
                 filterContext.Result = new HttpUnauthorizedResult();
             }
@@ -26,12 +26,8 @@ namespace Task3.Filters
                     new RouteValueDictionary
                     {
                         { "controller", "Account" },
-                        { "action", "Login" }
+                        { "action", "AccessDenied" }
                     });
-            }
-            else
-            {
-                return;
             }
         }
     }

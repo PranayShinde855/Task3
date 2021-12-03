@@ -9,18 +9,23 @@ using System.Web.Mvc;
 using Task3.Models;
 using Task3.Services;
 using Task3.Filters;
+using PagedList;
+using PagedList.Mvc;
 
 namespace Task3.Controllers
 {
+    [CustomAuthenticationFilter]
     [CustomAuthorizeFilter("Admin")]
     public class RolesController : Controller
     {
         private DBModel db = new DBModel();
 
         // GET: Roles
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
-            return View(db.Roles.ToList());
+            var listUsers = db.Roles.ToList();
+            PagedList<Role> _Roles = new PagedList<Role>(listUsers, page, pageSize);
+            return View(_Roles);
         }
 
         // GET: Roles/Details/5
@@ -45,8 +50,7 @@ namespace Task3.Controllers
         }
 
         // POST: Roles/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+              
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "RoleId,Name")] Role role)
@@ -77,8 +81,8 @@ namespace Task3.Controllers
         }
 
         // POST: Roles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+       
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "RoleId,Name")] Role role)

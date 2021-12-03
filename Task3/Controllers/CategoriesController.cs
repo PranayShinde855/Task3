@@ -14,6 +14,7 @@ using PagedList.Mvc;
 
 namespace Task3.Controllers
 {
+    [CustomAuthenticationFilter]
     [CustomAuthorizeFilter("Admin", "Normal", "Test")]
     public class CategoriesController : Controller
     {
@@ -23,8 +24,8 @@ namespace Task3.Controllers
         // GET: Categories
         public ActionResult Index(int page =1, int pagesize =10)
         {
-            var listCategories = db.categories.ToList();
-            PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize);
+            var listCategories = db.categories.ToList(); //listing data
+            PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize); // converting list to paged list with pagination
             return View(_categoryList);
         }
 
@@ -87,9 +88,6 @@ namespace Task3.Controllers
             return View(category);
         }
 
-        // POST: Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
