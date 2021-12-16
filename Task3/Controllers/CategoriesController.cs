@@ -11,6 +11,7 @@ using Task3.Services;
 using Task3.Filters;
 using PagedList;
 using PagedList.Mvc;
+using System.Threading.Tasks;
 
 namespace Task3.Controllers
 {
@@ -21,15 +22,21 @@ namespace Task3.Controllers
         private DBModel db = new DBModel();
 
      
+        [HttpGet]
         // GET: Categories
         public ActionResult Index(int page =1, int pagesize =10)
         {
-            var listCategories = db.categories.ToList(); //listing data
-            PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize); // converting list to paged list with pagination
+            //listing data
+            var listCategories = db.categories.ToList();
+            // Pagination
+            PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize);
             return View(_categoryList);
         }
 
-        
+
+
+
+               
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -53,7 +60,7 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CategoryId,CategoryName,IsActive,CreatedBy,CreatedDate,ModifiedDate")] Category category)
+        public ActionResult Create(Category category)
         {
             if (ModelState.IsValid)
             {
@@ -73,6 +80,7 @@ namespace Task3.Controllers
         }
 
         
+        [HttpGet]
         // GET: Categories/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -91,7 +99,7 @@ namespace Task3.Controllers
         [HttpPost]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CategoryId,CategoryName,IsActive,CreatedBy,CreatedDate,ModifiedDate")] Category category)
+        public ActionResult Edit(Category category)
         {
             if (ModelState.IsValid)
             {
@@ -108,8 +116,11 @@ namespace Task3.Controllers
             }
             return View(category);
         }
+
+
+        [HttpGet]
         [CustomAuthorizeFilter("Admin")]
-        // GET: Categories/Delete/5
+        // GET: Categories/Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -124,14 +135,15 @@ namespace Task3.Controllers
             return View(category);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Categories/Delete
+        [HttpGet]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Category category = db.categories.Find(id);
-            db.categories.Remove(category);
-            db.SaveChanges();
+            Category category = await db.categories.FindAsync(id);
+           db.categories.Remove(category);
+           await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 

@@ -19,6 +19,7 @@ namespace Task3.Controllers
     {
         private DBModel db = new DBModel();
 
+        [HttpGet]
         [CustomAuthenticationFilter]
         [CustomAuthorizeFilter("Admin")]
         // GET: Account
@@ -30,6 +31,7 @@ namespace Task3.Controllers
         }
 
 
+        [HttpGet]
         // GET: Account/Create
         public ActionResult Register()
         {
@@ -39,7 +41,7 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register([Bind(Include = "UserId,UserName,RoleId,Password")] User user)
+        public ActionResult Register(User user)
         {
             if (ModelState.IsValid)
             {
@@ -113,15 +115,13 @@ namespace Task3.Controllers
             } 
         }
 
-      
-
         public ActionResult Logout()
         {
             Session["UserId"] = string.Empty;
             Session["UserName"] = string.Empty;
             return RedirectToAction("Login");
         }
-
+        
         public ActionResult AccessDenied()
         {
             ViewBag.Message = "Unauthorized page!";

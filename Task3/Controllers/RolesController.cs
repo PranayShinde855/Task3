@@ -20,6 +20,7 @@ namespace Task3.Controllers
     {
         private DBModel db = new DBModel();
 
+        [HttpGet]
         // GET: Roles
         public ActionResult Index(int page = 1, int pageSize = 10)
         {
@@ -28,7 +29,8 @@ namespace Task3.Controllers
             return View(_Roles);
         }
 
-        // GET: Roles/Details/5
+        [HttpGet]
+        // GET: Roles/Details
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -43,6 +45,7 @@ namespace Task3.Controllers
             return View(role);
         }
 
+        [HttpGet]
         // GET: Roles/Create
         public ActionResult Create()
         {
@@ -53,7 +56,7 @@ namespace Task3.Controllers
               
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "RoleId,Name")] Role role)
+        public ActionResult Create(Role role)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +68,8 @@ namespace Task3.Controllers
             return View(role);
         }
 
-        // GET: Roles/Edit/5
+        [HttpGet]
+        // GET: Roles/Edit
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -80,12 +84,14 @@ namespace Task3.Controllers
             return View(role);
         }
 
-        // POST: Roles/Edit/5
-       
+
+
+        
         
         [HttpPost]
+        // POST: Roles/Edit
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "RoleId,Name")] Role role)
+        public ActionResult Edit(Role role)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +102,8 @@ namespace Task3.Controllers
             return View(role);
         }
 
-        // GET: Roles/Delete/5
+        [HttpGet]
+        // GET: Roles/Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -111,7 +118,7 @@ namespace Task3.Controllers
             return View(role);
         }
 
-        // POST: Roles/Delete/5
+        // POST: Roles/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

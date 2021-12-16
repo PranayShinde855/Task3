@@ -12,6 +12,7 @@ using Task3.Filters;
 using PagedList;
 using PagedList.Mvc;
 using NPOI.SS.Formula.Functions;
+using System.Threading.Tasks;
 
 namespace Task3.Controllers
 {
@@ -23,14 +24,16 @@ namespace Task3.Controllers
 
         [CustomAuthorizeFilter("Admin", "Normal", "Test")]
 
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        [HttpGet]
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var listProducts = db.products.ToList();
+            var listProducts = await db.products.ToListAsync();
             PagedList<Product> _productsList = new PagedList<Product>(listProducts, page, pageSize);
             return View(_productsList);
         }
 
-        // GET: Products/Details/5
+        [HttpGet]
+        // GET: Products
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace Task3.Controllers
             return View(product);
         }
 
+        [HttpGet]
         // GET: Products/Create
         public ActionResult Create()
         {
@@ -54,7 +58,7 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProductName,CategoryId,CreatedBy,CreatedDate,ModifiedDate")] Product product)
+        public ActionResult Create(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -75,7 +79,8 @@ namespace Task3.Controllers
             return View(product);
         }
 
-        // GET: Products/Edit/5
+        [HttpGet]
+        // GET: Products/Edit
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +99,7 @@ namespace Task3.Controllers
         [HttpPost]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ProductName,CategoryId,CreatedBy,CreatedDate,ModifiedDate")] Product product)
+        public ActionResult Edit(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -114,7 +119,7 @@ namespace Task3.Controllers
             return View(product);
         }
 
-        // GET: Products/Delete/5
+        // GET: Products/Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -129,7 +134,7 @@ namespace Task3.Controllers
             return View(product);
         }
 
-        // POST: Products/Delete/5
+        // POST: Products/Delete
         [HttpPost, ActionName("Delete")]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
