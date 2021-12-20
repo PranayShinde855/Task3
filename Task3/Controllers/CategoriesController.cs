@@ -24,26 +24,22 @@ namespace Task3.Controllers
      
         [HttpGet]
         // GET: Categories
-        public ActionResult Index(int page =1, int pagesize =10)
+        public async Task<ActionResult> Index(int page =1, int pagesize =10)
         {
             //listing data
-            var listCategories = db.categories.ToList();
+            var listCategories = await db.categories.ToListAsync();
             // Pagination
             PagedList<Category> _categoryList = new PagedList<Category>( listCategories, page, pagesize);
             return View(_categoryList);
         }
-
-
-
-
                
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.categories.Find(id);
+            Category category = await db.categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -60,7 +56,7 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Category category)
+        public async Task<ActionResult> Create(Category category)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +68,7 @@ namespace Task3.Controllers
                 _category.CreatedDate = DateTime.Now;
                 _category.ModifiedDate = null;
                 db.categories.Add(_category);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -82,13 +78,13 @@ namespace Task3.Controllers
         
         [HttpGet]
         // GET: Categories/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.categories.Find(id);
+            Category category = await db.categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();
@@ -99,11 +95,11 @@ namespace Task3.Controllers
         [HttpPost]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Category category)
+        public async Task<ActionResult> Edit(Category category)
         {
             if (ModelState.IsValid)
             {
-                var _category = db.categories.Where(m => m.CategoryId == category.CategoryId).SingleOrDefault();
+                var _category = await db.categories.Where(m => m.CategoryId == category.CategoryId).SingleOrDefaultAsync();
                 _category.CategoryName = category.CategoryName;
                 _category.IsActive = category.IsActive;
                 _category.CreatedBy = category.CreatedBy;
@@ -111,7 +107,7 @@ namespace Task3.Controllers
                 _category.ModifiedDate = DateTime.Now;
 
                 db.Entry(_category).State = EntityState.Modified;
-                db.SaveChanges();
+               await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -121,13 +117,13 @@ namespace Task3.Controllers
         [HttpGet]
         [CustomAuthorizeFilter("Admin")]
         // GET: Categories/Delete
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.categories.Find(id);
+            Category category = await db.categories.FindAsync(id);
             if (category == null)
             {
                 return HttpNotFound();

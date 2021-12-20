@@ -34,13 +34,13 @@ namespace Task3.Controllers
 
         [HttpGet]
         // GET: Products
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.products.Find(id);
+            Product product = await db.products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -58,7 +58,7 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Product product)
+        public async Task<ActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -71,7 +71,7 @@ namespace Task3.Controllers
                 _product.CreatedDate = DateTime.Now;
                 _product.ModifiedDate = null;
                 db.products.Add(_product);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -81,13 +81,13 @@ namespace Task3.Controllers
 
         [HttpGet]
         // GET: Products/Edit
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.products.Find(id);
+            Product product = await db.products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -99,7 +99,7 @@ namespace Task3.Controllers
         [HttpPost]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Product product)
+        public async Task<ActionResult> Edit(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -112,7 +112,7 @@ namespace Task3.Controllers
                 _product.CreatedDate = _product.CreatedDate;
                 _product.ModifiedDate = DateTime.Now;
                 db.Entry(_product).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             ViewBag.CategoryId = new SelectList(db.categories, "CategoryId", "CategoryName", product.CategoryId);
@@ -120,13 +120,13 @@ namespace Task3.Controllers
         }
 
         // GET: Products/Delete
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.products.Find(id);
+            Product product = await db.products.FindAsync(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -138,11 +138,11 @@ namespace Task3.Controllers
         [HttpPost, ActionName("Delete")]
         [CustomAuthorizeFilter("Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Product product = db.products.Find(id);
             db.products.Remove(product);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 

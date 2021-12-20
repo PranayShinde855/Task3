@@ -12,6 +12,7 @@ using Task3.Filters;
 using System.Security.Claims;
 using PagedList;
 using PagedList.Mvc;
+using System.Threading.Tasks;
 
 namespace Task3.Controllers
 {
@@ -23,13 +24,12 @@ namespace Task3.Controllers
         [CustomAuthenticationFilter]
         [CustomAuthorizeFilter("Admin")]
         // GET: Account
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var users = db.Users.Include(u => u.Role).ToList();
+            var users = await db.Users.Include(u => u.Role).ToListAsync();
             PagedList<User> _users = new PagedList<User>(users, page, pageSize);
             return View(_users);
         }
-
 
         [HttpGet]
         // GET: Account/Create
@@ -41,11 +41,11 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(User user)
+        public async Task<ActionResult> Register(User user)
         {
             if (ModelState.IsValid)
             {
-                var checkUserExist = db.Users.Where(m => m.UserName == user.UserName).SingleOrDefault();
+                var checkUserExist = await db.Users.Where(m => m.UserName == user.UserName).SingleOrDefaultAsync();
                 if(checkUserExist != null)
                 {
                     ModelState.AddModelError("", "UserName already Exist, Enter another UserName.");
@@ -59,7 +59,7 @@ namespace Task3.Controllers
                     _user.Role = user.Role;
                     _user.Password = user.Password;
                     db.Users.Add(_user);
-                    db.SaveChanges();
+                   await db.SaveChangesAsync();
                     return RedirectToAction("Login");
                 }
             }
@@ -76,11 +76,11 @@ namespace Task3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(User users)
+        public async Task<ActionResult> Login(User users)
         {
             if(ModelState.IsValid)
             {
-                var checkInputs = db.Users.Where(m => m.UserName == users.UserName && m.Password == users.Password).SingleOrDefault();
+                var checkInputs = await db.Users.Where(m => m.UserName == users.UserName && m.Password == users.Password).FirstOrDefaultAsync();
                 if ( checkInputs!=null)
                 {
                     Session["UserId"] = checkInputs.UserId;
@@ -98,7 +98,7 @@ namespace Task3.Controllers
                         var c = new List<Claim> {
                             new Claim(ClaimTypes.Name, checkInputs.UserName)
                         };
-                        identity.AddClaim(c.FirstOrDefault());
+                       identity.AddClaim(c.FirstOrDefault());
                         HttpContext.User = new ClaimsPrincipal(identity);
                         return RedirectToAction("Index", "Products");
                     }

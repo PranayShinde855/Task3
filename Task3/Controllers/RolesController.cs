@@ -11,6 +11,7 @@ using Task3.Services;
 using Task3.Filters;
 using PagedList;
 using PagedList.Mvc;
+using System.Threading.Tasks;
 
 namespace Task3.Controllers
 {
@@ -22,22 +23,22 @@ namespace Task3.Controllers
 
         [HttpGet]
         // GET: Roles
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var listUsers = db.Roles.ToList();
+            var listUsers = await db.Roles.ToListAsync();
             PagedList<Role> _Roles = new PagedList<Role>(listUsers, page, pageSize);
             return View(_Roles);
         }
 
         [HttpGet]
         // GET: Roles/Details
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Role role = db.Roles.Find(id);
+            Role role = await db.Roles.FindAsync(id);
             if (role == null)
             {
                 return HttpNotFound();
@@ -56,12 +57,12 @@ namespace Task3.Controllers
               
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Role role)
+        public async Task<ActionResult> Create(Role role)
         {
             if (ModelState.IsValid)
             {
                 db.Roles.Add(role);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -70,33 +71,29 @@ namespace Task3.Controllers
 
         [HttpGet]
         // GET: Roles/Edit
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Role role = db.Roles.Find(id);
+            Role role = await db.Roles.FindAsync(id);
             if (role == null)
             {
                 return HttpNotFound();
             }
             return View(role);
         }
-
-
-
-        
         
         [HttpPost]
         // POST: Roles/Edit
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Role role)
+        public async Task<ActionResult> Edit(Role role)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(role).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(role);
@@ -104,13 +101,13 @@ namespace Task3.Controllers
 
         [HttpGet]
         // GET: Roles/Delete
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Role role = db.Roles.Find(id);
+            Role role = await db.Roles.FindAsync(id);
             if (role == null)
             {
                 return HttpNotFound();
@@ -121,11 +118,11 @@ namespace Task3.Controllers
         // POST: Roles/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Role role = db.Roles.Find(id);
             db.Roles.Remove(role);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
