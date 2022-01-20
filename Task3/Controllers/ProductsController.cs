@@ -26,7 +26,7 @@ namespace Task3.Controllers
 
         [HttpGet]
         public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
-        {
+        {           
             var listProducts = await db.products.ToListAsync();
             PagedList<Product> _productsList = new PagedList<Product>(listProducts, page, pageSize);
             return View(_productsList);
